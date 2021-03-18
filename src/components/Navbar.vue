@@ -1,8 +1,7 @@
 <template>
-  <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+  <nav class="navbar navbar-expand-md navbar-fixed-top main-nav">
     <div class="container">
-      <router-link to="/" class="navbar-brand">Vue Firebase Auth</router-link>
-      <button
+    <button
         class="navbar-toggler"
         type="button"
         data-toggle="collapse"

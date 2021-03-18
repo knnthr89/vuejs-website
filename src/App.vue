@@ -1,6 +1,14 @@
 <template>
   <div>
-    <navbar></navbar>
+    <Slide>
+      <a id="customers" href="/customers">
+        <span>Customers</span>
+      </a>
+      <a id="products" href="/products">
+        <span>Products</span>
+      </a>
+    </Slide>
+    <Navbar></Navbar>
     <main class="py-4">
       <router-view></router-view>
     </main>
@@ -8,10 +16,12 @@
 </template>
 
 <script>
-import navbar from "./components/Navbar";
+import Navbar from "./components/Navbar";
+import { Slide } from 'vue-burger-menu';
 export default {
   components: {
-    navbar
+    Navbar,
+    Slide
   }
 };
 </script>
