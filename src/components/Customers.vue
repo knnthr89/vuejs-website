@@ -40,27 +40,27 @@
                 <form @submit.prevent="onUpdateForm">
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" v-model="customer.name" required>
+                    <input type="text" class="form-control" v-model="editCustomer.name" required>
                 </div>
 
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" class="form-control" v-model="customer.email" required>
+                    <input type="email" class="form-control" v-model="editCustomer.email" required>
                 </div>
 
                 <div class="form-group">
                     <label>Phone</label>
-                    <input type="text" class="form-control" v-model="customer.phone" required>
+                    <input type="text" class="form-control" v-model="editCustomer.phone" required>
                 </div>
 
                  <div class="form-group">
                     <label>Address</label>
-                    <input type="text" class="form-control" v-model="customer.address" required>
+                    <input type="text" class="form-control" v-model="editCustomer.address" required>
                 </div>
 
                  <div class="form-group">
                     <label>RFC</label>
-                    <input type="text" class="form-control" v-model="customer.rfc" required>
+                    <input type="text" class="form-control" v-model="editCustomer.rfc" required>
                 </div>
                 <div class="form-group col-md-5 float-right mt-4">
                     <button class="btn btn-warning text-white btn-block">Edit</button>
@@ -87,7 +87,7 @@
                         <td>{{ customer.address }}</td>
                         <td>{{ customer.rfc }}</td>
                         <td>
-                            <b-button v-b-modal.modal-2 @click="editCustomer(customer.key)" class="btn btn-warning text-white btn-space mr-2">Edit</b-button>
+                            <b-button v-b-modal.modal-2 @click="edCustomer(customer.key)" class="btn btn-warning text-white btn-space mr-2">Edit</b-button>
                             <button @click.prevent="deleteCustomer(customer.key)" class="btn btn-danger btn-space mr-2">Delete</button>
                         </td>
                     </tr>
@@ -104,7 +104,8 @@
         data() {
             return {
                 Customers: [],
-                 customer: {}
+                 customer: {},
+                editCustomer : {}
             }
         },
         created() {
@@ -148,12 +149,12 @@
                    alert(error);
                })
             },
-            editCustomer(id){
+            edCustomer(id){
                 let dbRef = db.collection('customers').doc(id);
                 dbRef.get().then((doc) => {
                     
-                this.customer = doc.data();
-                this.customer.id = id;
+                this.editCustomer = doc.data();
+                this.editCustomer.id = id;
                 
              }).catch((error) => {
                 console.log(error)
@@ -161,11 +162,11 @@
               },
               onUpdateForm(event) {
                 event.preventDefault();
-                db.collection('customers').doc(this.customer.id)
-                .update(this.customer).then(() => {
+                db.collection('customers').doc(this.editCustomer.id)
+                .update(this.editCustomer).then(() => {
                     console.log("Customer successfully updated!");
-                    this.$router.push('/customers');
-                }).catch((error) => {
+                     this.$router.push('/customers');
+                    }).catch((error) => {
                     console.log(error);
                 });
                 }
