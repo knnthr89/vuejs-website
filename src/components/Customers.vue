@@ -1,8 +1,10 @@
-<!--<template>
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <h3 class="text-center">Add Customer</h3>
-            <form @submit.prevent="onFormSubmit">
+<template>
+    <div class="row">
+        <div class="col-md-12">
+            <b-button v-b-modal.modal-1 class="btn-success float-right mr-4 mb-3">Add new Customer</b-button>
+            <b-modal id="modal-1" title="Add new customer" hide-footer="true">
+                <div class="col-md-12">
+                <form @submit.prevent="onFormSubmit">
                 <div class="form-group">
                     <label>Name</label>
                     <input type="text" class="form-control" v-model="customer.name" required>
@@ -27,50 +29,46 @@
                     <label>RFC</label>
                     <input type="text" class="form-control" v-model="customer.rfc" required>
                 </div>
-
+                <div class="form-group col-md-5 float-right mt-4">
+                    <button class="btn btn-success btn-block">Add</button>
+                </div>
+                </form>
+                </div>
+            </b-modal>
+            <b-modal id="modal-2" title="Edit customer" hide-footer="true">
+                <div class="col-md-12">
+                <form @submit.prevent="onUpdateForm">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" v-model="customer.name" required>
+                </div>
 
                 <div class="form-group">
-                    <button class="btn btn-primary btn-block">Add Customer</button>
+                    <label>Email</label>
+                    <input type="email" class="form-control" v-model="customer.email" required>
                 </div>
-            </form>
-        </div>
-    </div>
-</template>
 
-<script>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" class="form-control" v-model="customer.phone" required>
+                </div>
 
-import { db } from '../main';
+                 <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" class="form-control" v-model="customer.address" required>
+                </div>
 
-    export default {
-        data() {
-            return {
-                customer: {
-                   name: '',
-                   email: '',
-                   phone: '',
-                   address: '',
-                   rfc: ''
-                }
-            }
-        },
-        methods: {
-            onFormSubmit(event) { 
-               //alert(JSON.stringify(this.user)) 
-               event.preventDefault();
-               db.collection('customers').add(this.customer).then(() => {
-                 alert("Customer successfully created!");
-               }).catch((error) => {
-                   alert(error);
-               })
-            }
-        }
-    }
-</script>-->
-<template>
-    <div class="row">
-        <div class="col-md-12">
-            <button class="btn btn-success float-right mr-4 mb-3">Add</button>
-            <table class="table table-striped mr-5">
+                 <div class="form-group">
+                    <label>RFC</label>
+                    <input type="text" class="form-control" v-model="customer.rfc" required>
+                </div>
+                <div class="form-group col-md-5 float-right mt-4">
+                    <button class="btn btn-warning text-white btn-block">Edit</button>
+                </div>
+                </form>
+                </div>
+            </b-modal>
+            <table class="table table-striped mx-auto">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -89,9 +87,8 @@ import { db } from '../main';
                         <td>{{ customer.address }}</td>
                         <td>{{ customer.rfc }}</td>
                         <td>
-                            <router-link :to="{name: 'edit', params: { id: customer.key }}" class="btn btn-primary">Edit
-                            </router-link>
-                            <button @click.prevent="deleteCustomer(customer.key)" class="btn btn-danger">Delete</button>
+                            <b-button v-b-modal.modal-2 @click="editCustomer(customer.key)" class="btn btn-warning text-white btn-space mr-2">Edit</b-button>
+                            <button @click.prevent="deleteCustomer(customer.key)" class="btn btn-danger btn-space mr-2">Delete</button>
                         </td>
                     </tr>
                 </tbody>
@@ -106,7 +103,8 @@ import { db } from '../main';
     export default {
         data() {
             return {
-                Customers: []
+                Customers: [],
+                 customer: {}
             }
         },
         created() {
@@ -134,9 +132,45 @@ import { db } from '../main';
                     console.error(error);
                 })
               }
-            }
+            },
+            onFormSubmit(event) { 
+                event.preventDefault();
+               db.collection('customers').add(this.customer).then(() => {
+                 alert("Customer successfully created!");
+                 this.customer = {
+                      name: '',
+                     email: '',
+                    phone: '',
+                    address: '',
+                     rfc: ''
+                 }
+               }).catch((error) => {
+                   alert(error);
+               })
+            },
+            editCustomer(id){
+                let dbRef = db.collection('customers').doc(id);
+                dbRef.get().then((doc) => {
+                    
+                this.customer = doc.data();
+                this.customer.id = id;
+                
+             }).catch((error) => {
+                console.log(error)
+            })
+              },
+              onUpdateForm(event) {
+                event.preventDefault();
+                db.collection('customers').doc(this.customer.id)
+                .update(this.customer).then(() => {
+                    console.log("Customer successfully updated!");
+                    this.$router.push('/customers');
+                }).catch((error) => {
+                    console.log(error);
+                });
+                }
+            },
         }
-    }
 </script>
 
 <style>
